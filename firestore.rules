@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== STEP: put YOUR OWN Google email here (lowercase) =====
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() == "your.email@gmail.com";
+    }
+
+    function isFriend() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/config/allow)
+        && request.auth.token.email.lower() in get(/databases/$(database)/documents/config/allow).data.emails;
+    }
+
+    // The game files: friends can read, only you can upload
+    match /game/{doc} {
+      allow read: if isOwner() || isFriend();
+      allow write: if isOwner();
+    }
+
+    // The friends list: only you can see or change it
+    match /config/allow {
+      allow read, write: if isOwner();
+    }
+
+    // Everything else is locked
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
