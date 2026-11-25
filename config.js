@@ -1,5 +1,3 @@
-// Firebase web app config for Light and Darkness
-// (These values are safe to be public. The lock is done by the Firestore rules.)
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyCu24enlYcfhYv6P1k2SRNDV9BFRNZnlQQ",
   authDomain: "light-darkness-ae6bf.firebaseapp.com",
